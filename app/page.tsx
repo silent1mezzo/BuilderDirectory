@@ -121,7 +121,7 @@ export default function BuildersPage() {
                 variant={selectedCategory === category ? "default" : "outline"}
                 className={`cursor-pointer transition-all px-4 py-2 text-sm font-medium rounded-full ${
                   selectedCategory === category
-                    ? "bg-red-600 text-white hover:bg-red-700 shadow-md"
+                    ? "bg-[#932f2f] text-white hover:bg-red-700 shadow-md"
                     : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
                 }`}
                 onClick={() => setSelectedCategory(category)}
@@ -152,13 +152,13 @@ export default function BuildersPage() {
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
                           <div>
                             <h3 className="text-3xl font-bold text-gray-900 mb-2">{builder.name}</h3>
-                            <p className="text-xl text-red-600 font-medium mb-2">{builder.title}</p>
+                            <p className="text-xl text-[#932f2f] font-medium mb-2">{builder.title}</p>
                             <div className="flex items-center text-gray-500 mb-3">
                               <MapPin className="h-4 w-4 mr-2" />
                               <span className="text-sm">{builder.location}</span>
                             </div>
                           </div>
-                          <Badge className="bg-red-50 text-red-700 border-red-200 px-4 py-2 self-start">
+                          <Badge className="bg-[#932f2f] text-white border-red-200 px-4 py-2 self-start">
                             {builder.category}
                           </Badge>
                         </div>
@@ -169,7 +169,7 @@ export default function BuildersPage() {
 
                       {/* CTA */}
                       <div className="flex flex-col sm:flex-row gap-4">
-                        <button className="bg-red-600 text-white px-8 py-3 rounded-full font-medium hover:bg-red-700 transition-colors">
+                        <button className="bg-[#932f2f] text-white px-8 py-3 rounded-full font-medium hover:bg-red-700 transition-colors">
                           Learn Their Story
                         </button>
                         {builder.website && (
