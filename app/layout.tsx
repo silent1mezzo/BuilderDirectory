@@ -74,7 +74,7 @@ export default function RootLayout({
               <div className="min-h-screen">
                 <div className="container px-4 py-12">
                   <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-                    <Sidebar pageTitle="Builder Directory" />
+                    <Sidebar pageTitle="Great Canadian Builders" />
                     <div className="col-span-3">{children}</div>
                   </div>
                 </div>

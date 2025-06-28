@@ -91,20 +91,46 @@ const builders: Canadian[] = [
 const categories = ["All", "Technology", "Entertainment", "Literature", "Science", "Music", "Environment"]
 
 export default function BuildersPage() {
+  const [searchTerm, setSearchTerm] = useState("")
+  const [selectedCategory, setSelectedCategory] = useState("All")
+
   return (
     <div className="space-y-6">
       <div className="text-center mb-8">
-        <h1 className="text-4xl font-bold text-gray-900 mb-4">
-          Great Canadian Builders 🏗️🇨🇦
-        </h1>
         <div className="max-w-3xl mx-auto">
-            <blockquote className="text-xl italic text-gray-700 leading-relaxed">
-              "Coming back to Canada always reminds me why I love this place: decency, good humour, and no one caring if
-              I wear the same parka every day."
-              <footer className="text-red-600 font-medium mt-3 text-lg">— Dan Levy</footer>
-            </blockquote>
-          </div>
+          <h2 className="text-xl font-bold text-gray-700 mb-6">Celebrating the innovators and pioneers shaping Canada’s future in tech, science, and culture.</h2> 
+        </div>
       </div>
+
+       {/* Search and Filters */}
+       <div className="mb-12 space-y-6">
+          <div className="relative max-w-md mx-auto">
+            <Search className="absolute left-4 top-1/2 transform -translate-y-1/2 text-gray-400 h-5 w-5" />
+            <Input
+              placeholder="Find your inspiration..."
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+              className="pl-12 py-3 bg-white border-gray-200 text-lg rounded-xl shadow-sm"
+            />
+          </div>
+
+          <div className="flex flex-wrap justify-center gap-3">
+            {categories.map((category) => (
+              <Badge
+                key={category}
+                variant={selectedCategory === category ? "default" : "outline"}
+                className={`cursor-pointer transition-all px-4 py-2 text-sm font-medium rounded-full ${
+                  selectedCategory === category
+                    ? "bg-red-600 text-white hover:bg-red-700 shadow-md"
+                    : "bg-white text-gray-700 hover:bg-gray-50 border-gray-300"
+                }`}
+                onClick={() => setSelectedCategory(category)}
+              >
+                {category}
+              </Badge>
+            ))}
+          </div>
+        </div>
 
       <div className="space-y-8">
         {builders.map((builder) => (
@@ -122,10 +148,10 @@ export default function BuildersPage() {
                   <div className="flex-1 p-8 lg:p-10">
                     <div className="flex flex-col h-full">
                       {/* Header */}
-                      <div className="mb-6">
+                      <div>
                         <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between mb-4">
                           <div>
-                            <h2 className="text-3xl font-bold text-gray-900 mb-2">{builder.name}</h2>
+                            <h3 className="text-3xl font-bold text-gray-900 mb-2">{builder.name}</h3>
                             <p className="text-xl text-red-600 font-medium mb-2">{builder.title}</p>
                             <div className="flex items-center text-gray-500 mb-3">
                               <MapPin className="h-4 w-4 mr-2" />
@@ -135,14 +161,6 @@ export default function BuildersPage() {
                           <Badge className="bg-red-50 text-red-700 border-red-200 px-4 py-2 self-start">
                             {builder.category}
                           </Badge>
-                        </div>
-
-                        {/* Achievement highlight */}
-                        <div className="bg-gradient-to-r from-red-50 to-orange-50 p-4 rounded-xl mb-6">
-                          <div className="flex items-start space-x-3">
-                            <Trophy className="h-5 w-5 text-red-600 mt-1 flex-shrink-0" />
-                            <p className="font-medium text-red-800 leading-relaxed">{builder.achievement}</p>
-                          </div>
                         </div>
                       </div>
 
