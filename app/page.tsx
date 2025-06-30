@@ -1,11 +1,12 @@
 "use client"
 
 import { useState } from "react"
+import useSWR from "swr"
 import { Input } from "@/components/ui/input"
 import { Badge } from "@/components/ui/badge"
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar"
+import { Avatar, AvatarImage } from "@/components/ui/avatar"
 import { Search, MapPin, ExternalLink, Trophy } from "lucide-react"
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 
 interface Canadian {
   id: number
@@ -19,80 +20,36 @@ interface Canadian {
   website?: string
 }
 
-const builders: Canadian[] = [
-  {
-    id: 1,
-    name: "Ryan Reynolds",
-    title: "Actor & Entrepreneur",
-    location: "Vancouver, BC",
-    category: "Entertainment",
-    description:
-      "From Vancouver comedy clubs to Hollywood A-lister, Ryan built a media empire spanning film, spirits, and sports. His authentic voice and business acumen turned him into one of the most influential Canadian exports.",
-    achievement: "Built multiple 9-figure businesses while maintaining authentic Canadian humor",
-    avatar: "/placeholder.svg?height=120&width=120",
-  },
-  {
-    id: 2,
-    name: "Tobias Lütke",
-    title: "Founder & CEO, Shopify",
-    location: "Ottawa, ON",
-    category: "Technology",
-    description:
-      "A German immigrant who couldn't find good e-commerce software, so he built Shopify. Today, his platform powers over 4 million businesses worldwide and has created countless entrepreneurial success stories.",
-    achievement: "Democratized e-commerce for millions of entrepreneurs globally",
-    avatar: "/placeholder.svg?height=120&width=120",
-  },
-  {
-    id: 3,
-    name: "Margaret Atwood",
-    title: "Author & Visionary",
-    location: "Toronto, ON",
-    category: "Literature",
-    description:
-      "Her dystopian masterpiece 'The Handmaid's Tale' predicted societal challenges decades before they emerged. Margaret's work continues to shape global conversations about freedom, power, and human rights.",
-    achievement: "Authored works that became cultural phenomena and social movements",
-    avatar: "/placeholder.svg?height=120&width=120",
-  },
-  {
-    id: 4,
-    name: "Chris Hadfield",
-    title: "Astronaut & Inspiration Leader",
-    location: "Milton, ON",
-    category: "Science",
-    description:
-      "From small-town Ontario to commanding the International Space Station, Chris showed the world that Canadians can reach for the stars. His space videos inspired millions to pursue STEM careers.",
-    achievement: "First Canadian to command the International Space Station",
-    avatar: "/placeholder.svg?height=120&width=120",
-  },
-  {
-    id: 5,
-    name: "Céline Dion",
-    title: "Global Music Icon",
-    location: "Charlemagne, QC",
-    category: "Music",
-    description:
-      "From singing in her family's piano bar to selling 250+ million records worldwide, Céline proved that talent, determination, and authenticity can conquer any stage. Her voice became Canada's gift to the world.",
-    achievement: "One of the best-selling music artists of all time with 250M+ records sold",
-    avatar: "/placeholder.svg?height=120&width=120",
-  },
-  {
-    id: 6,
-    name: "David Suzuki",
-    title: "Environmental Pioneer",
-    location: "Vancouver, BC",
-    category: "Environment",
-    description:
-      "For over 50 years, David has been Canada's environmental conscience. His work educated generations about climate change and inspired a global movement toward sustainable living.",
-    achievement: "Educated millions about environmental science through 'The Nature of Things'",
-    avatar: "/placeholder.svg?height=120&width=120",
-  },
-]
-
 const categories = ["All", "Technology", "Entertainment", "Literature", "Science", "Music", "Environment"]
 
 export default function BuildersPage() {
   const [searchTerm, setSearchTerm] = useState("")
   const [selectedCategory, setSelectedCategory] = useState("All")
+
+  // TODO: Would need to paginate results
+  const { data: builders, error, isLoading } = useSWR<Canadian[]>(
+    "/builders/api/v1/builders/",
+  )
+
+  // TODO: Search Bar + Categories would need to build a dynamic URL vs filter on all of the results
+  const filteredBuilders = builders?.filter((builder) => {
+    const matchesSearch = builder.name.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         builder.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
+                         builder.description.toLowerCase().includes(searchTerm.toLowerCase())
+    const matchesCategory = selectedCategory === "All" || builder.category === selectedCategory
+    return matchesSearch && matchesCategory
+  }) || []
+
+  if (error) {
+    return (
+      <div className="flex items-center justify-center min-h-[400px]">
+        <div className="text-center">
+          <h2 className="text-2xl font-bold text-gray-900 mb-2">Unable to load builders</h2>
+          <p className="text-gray-600">Please try again later</p>
+        </div>
+      </div>
+    )
+  }
 
   return (
     <div className="space-y-6">
@@ -133,7 +90,19 @@ export default function BuildersPage() {
         </div>
 
       <div className="space-y-8">
-        {builders.map((builder) => (
+        {isLoading ? (
+          <div className="flex items-center justify-center min-h-[400px]">
+            <div className="text-center">
+              <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-[#932f2f] mx-auto mb-4"></div>
+              <p className="text-gray-600">Loading builders...</p>
+            </div>
+          </div>
+        ) : filteredBuilders.length === 0 ? (
+          <div className="text-center py-12">
+            <p className="text-gray-600 text-lg">No builders found matching your criteria.</p>
+          </div>
+        ) : (
+          filteredBuilders.map((builder) => (
           <Card key={builder.id} className="hover:shadow-lg transition-shadow duration-200">
             <CardContent className="p-0">
                 <div className="flex flex-col lg:flex-row">
@@ -184,7 +153,8 @@ export default function BuildersPage() {
                 </div>
               </CardContent>
           </Card>
-        ))}
+          ))
+        )}
       </div>
 
       <div className="text-center mt-12 p-6 bg-gray-50 rounded-lg">

@@ -16,6 +16,10 @@ const nextConfig = {
         source: "/ph/static/:path*",
         destination: "https://us-assets.i.posthog.com/static/:path*",
       },
+      {
+        source: "/api/v1/:path*",
+        destination: `${process.env.NEXT_PUBLIC_API_URL}/:path*`,
+      },
     ];
   },
 };
